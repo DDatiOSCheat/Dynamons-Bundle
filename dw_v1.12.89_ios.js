@@ -30882,50 +30882,15 @@ showNotification("Đã load bundle", "success");
                             _gthis.showMPWinner(0));
                         }));
                     }));
-              else if (this._serverErrorHandlerEnabled) {
-                ((this._botBattle = !0),
-                  (this._mpError = null),
-                  (this._mpData =
-                    co_doubleduck_dynamons3_meta_BotBattleMatchmake
-                      .Instance()
-                      .getMPData()),
-                  (this._mpData.oppData.name = this._oppName),
-                  (this._mpUser = this._mpData.mpHandler));
-                var tempTurn = co_doubleduck_dynamons3_core_Battle._playerTurn;
-                co_doubleduck_utils_TweenChain
-                  .get(this)
-                  .wait(7e3)
-                  .call(function () {
-                    if (_gthis._enemyMon.getCurrHP() <= 0)
-                      return (
-                        null == _gthis._deadMon &&
-                          (_gthis._deadMon = _gthis._enemyMon),
-                        void _gthis.resolveDeath()
-                      );
-                    if (co_doubleduck_dynamons3_core_Battle._playerTurn)
-                      _gthis._enemyMon.setupBattleCards(_gthis._rigEnemDeck);
-                    else if (0 < _gthis._enemyMon.getCurrHP()) {
-                      var abil = co_doubleduck_dynamons3_meta_BotBattleMatchmake
-                        .Instance()
-                        .getRandomAbil(_gthis._enemyMon.getCurrHand());
-                      _gthis._enemyMon.setupBattleCards();
-                      var chain = co_doubleduck_utils_TweenChain
-                        .get(_gthis._botTurnExpectant)
-                        .wait(1e3 + Math.round(2e3 * Math.random()))
-                        .call(
-                          $bind(
-                            ($_ =
-                              co_doubleduck_dynamons3_meta_BotBattleMatchmake.Instance()),
-                            $_.setTurnData,
-                          ),
-                          [_gthis._mpTurnQueue, abil],
-                        );
-                      tempTurn ||
-                        chain
-                          .wait(1e3)
-                          .call($bind(_gthis, _gthis.waitForPVPOpp));
-                    }
-                  });
+                            else if (this._serverErrorHandlerEnabled) {
+                co_doubleduck_dynamons3_core_Battle._playerTurn = !1;
+                var errModal1 = new co_doubleduck_dynamons3_meta_ErrorModal(
+                  "server_error",
+                );
+                (this.addChild(errModal1),
+                  (errModal1.callWhenClosed = function () {
+                    (_gthis.removeChild(errModal1), _gthis.fadeToMenu());
+                  }));
               } else {
                 co_doubleduck_dynamons3_core_Battle._playerTurn = !1;
                 var errModal1 = new co_doubleduck_dynamons3_meta_ErrorModal(
@@ -59109,9 +59074,7 @@ handleItemsScr: function (e) {
                 });
             },
             startBattle: function () {
-              co_doubleduck_dynamons3_meta_BotBattleMatchmake
-                .Instance()
-                .createFight(null);
+              //
             },
             getRandomMapId: function () {
               var availBgs = [
@@ -59257,7 +59220,7 @@ handleItemsScr: function (e) {
               (opData.gameVersion = GlobalVars.gameVersion),
               (opData.icon = this.getEnemy()),
               (opData.items = []),
-              (opData.name = "tinysweet bot"),
+              (opData.name = "bot"),
               (opData.pvpRanking =
                 co_doubleduck_dynamons3_meta_GameState.getMatchLevel()));
             var maxScore = 50;
@@ -146445,14 +146408,11 @@ handleUse: function (e) {
               }
             },
             startBotBattle: function () {
-              (co_doubleduck_dynamons3_meta_BotBattleMatchmake
-                .Instance()
-                .createFight(new co_doubleduck_utils_DynamicEvent("event", {})),
-                co_doubleduck_dynamons3_meta_GameState.sendBotBatleStartEvent());
+              showNotification("<i class='fa-solid fa-robot'></i> Không tìm thấy đối thủ! Bot đã bị tắt.", "error");
+              //co_doubleduck_dynamons3_meta_GameState.sendBotBatleStartEvent();
             },
             checkBattleExists: function () {
-              null == co_doubleduck_dynamons3_Game.instance.getBattle() &&
-                this.startBotBattle();
+              //
             },
             handleGotMatch: function (e) {
               if (

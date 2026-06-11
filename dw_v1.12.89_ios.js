@@ -146334,7 +146334,7 @@ handleUse: function (e) {
                       !co_doubleduck_dynamons3_meta_GameState.correctName(
                         co_doubleduck_dynamons3_meta_GameState.getProfNick(),
                       ),
-                    useBotBattleImmediately = 0 == Std.random(2) || isCheater,
+                    useBotBattleImmediately = false,
                     ranks =
                       co_doubleduck_dynamons3_data_GameplayDB.mpData()
                         .arenaEvent.ranks,
@@ -146357,7 +146357,7 @@ handleUse: function (e) {
                       1 == mon.getData().isTitan &&
                       ++titansAmount);
                 }
-                var dontUseBots = 4 <= currentRankLevel + 1;
+                var dontUseBots = true;
                 if (0 == this._matchCurrStep)
                   if (!useBotBattleImmediately || dontUseBots) {
                     for (

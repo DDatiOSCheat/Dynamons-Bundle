@@ -3849,46 +3849,69 @@ var $jscomp = $jscomp || {};
     y = ya.clampI(y, 0, l);
     c = ya.clampI(c, -1, l);
 
-    // ===== RATE LIMIT PATCH =====
+    // 
     var MAX_STEP = 4;
 
-    if (y > c + MAX_STEP && f !== "BYPASS") {
+if (y > c + MAX_STEP && f !== "BYPASS") {
 
-        var nextStepScore = c + MAX_STEP;
+var nextStepScore = c + MAX_STEP;
 
-        var nextScoreData = {
-            h: {}
-        };
+var nextScoreData = {
+    h: {}
+};
 
-        for (var key in d.h)
-            nextScoreData.h[key] = d.h[key];
+for (var key in d.h)
+    nextScoreData.h[key] = d.h[key];
 
-        nextScoreData.h.score = nextStepScore;
+nextScoreData.h.score = nextStepScore;
 
-        ia.setArenaEventScore(
-            a,
-            b,
-            c,
-            nextScoreData,
-            e,
-            l,
-            "BYPASS"
+if (typeof showNotification === "function")
+    showNotification(
+        "<i class='fa-solid fa-bolt'></i> Gửi +" +
+        MAX_STEP +
+        ": " +
+        c +
+        " → " +
+        nextStepScore,
+        "success"
+    );
+
+ia.setArenaEventScore(
+    a,
+    b,
+    c,
+    nextScoreData,
+    e,
+    l,
+    "BYPASS"
+);
+
+setTimeout(function () {
+
+    if (typeof showNotification === "function")
+        showNotification(
+            "<i class='fa-solid fa-spinner fa-spin'></i> Tiếp tục: " +
+            nextStepScore +
+            " → " +
+            y,
+            "info"
         );
 
-        setTimeout(function () {
-            ia.setArenaEventScore(
-                a,
-                b,
-                nextStepScore,
-                d,
-                e,
-                l,
-                "LOOP"
-            );
-        }, 20000);
+    ia.setArenaEventScore(
+        a,
+        b,
+        nextStepScore,
+        d,
+        e,
+        l,
+        "LOOP"
+    );
 
-        return;
-    }
+}, 20000);
+
+return;
+
+}
 
     // 
 

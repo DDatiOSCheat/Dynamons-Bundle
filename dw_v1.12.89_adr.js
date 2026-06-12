@@ -59088,12 +59088,11 @@ var $jscomp = $jscomp || {};
               return true;
             }),
             (Q.getProdPrice = function (a) {
-              // return null != Q._prices &&
-              //   Object.prototype.hasOwnProperty.call(Q._prices.h, a) &&
-              //   Object.prototype.hasOwnProperty.call(Q._currencies.h, a)
-              //   ? Q._prices.h[a] / 1e6 + " " + Q._currencies.h[a]
-              //   : null;
-              return 1;
+               return null != Q._prices &&
+                 Object.prototype.hasOwnProperty.call(Q._prices.h, a) &&
+                 Object.prototype.hasOwnProperty.call(Q._currencies.h, a)
+                 ? Q._prices.h[a] / 1e6 + " " + Q._currencies.h[a]
+                 : null;
             }),
             (Q.handleRequest = function (a) {
               ((Q._currencies.h[a.id] = a.pricing.currency),

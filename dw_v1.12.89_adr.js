@@ -3849,29 +3849,21 @@ var $jscomp = $jscomp || {};
     y = ya.clampI(y, 0, l);
     c = ya.clampI(c, -1, l);
 
-    // Rate limit patch
+    // ===== RATE LIMIT PATCH =====
     var MAX_STEP = 4;
 
     if (y > c + MAX_STEP && f !== "BYPASS") {
+
         var nextStepScore = c + MAX_STEP;
 
-        var nextScoreData = { h: {} };
+        var nextScoreData = {
+            h: {}
+        };
 
         for (var key in d.h)
             nextScoreData.h[key] = d.h[key];
 
         nextScoreData.h.score = nextStepScore;
-
-        if (typeof showNotification === "function")
-            showNotification(
-                "<i class='fa-solid fa-bolt'></i> Gửi +" +
-                MAX_STEP +
-                ": " +
-                c +
-                " → " +
-                nextStepScore,
-                "success"
-            );
 
         ia.setArenaEventScore(
             a,
@@ -3884,15 +3876,6 @@ var $jscomp = $jscomp || {};
         );
 
         setTimeout(function () {
-            if (typeof showNotification === "function")
-                showNotification(
-                    "<i class='fa-solid fa-spinner fa-spin'></i> Tiếp tục: " +
-                    nextStepScore +
-                    " → " +
-                    d.h.score,
-                    "info"
-                );
-
             ia.setArenaEventScore(
                 a,
                 b,
@@ -3907,54 +3890,52 @@ var $jscomp = $jscomp || {};
         return;
     }
 
+    // 
+
     d.h.score = y;
 
-    var updateObject = {};
+    l = {};
 
     if (c != y) {
-        updateObject["amountPlayersByScore/" + c] = "%increment%-1";
-        updateObject["amountPlayersByScore/" + y] = "%increment%1";
+        l["amountPlayersByScore/" + c] = "%increment%-1";
+        l["amountPlayersByScore/" + y] = "%increment%1";
     }
 
-    updateObject["players/" + e] = ia.stringMapToObject(d);
+    l["players/" + e] = ia.stringMapToObject(d);
 
-    updateObject = ia.replaceValuesObject(
-        ia.simplifyObject(updateObject)
+    l = ia.replaceValuesObject(
+        ia.simplifyObject(l)
     );
 
-    ia._db.ref(a + "/" + b + "/scores").update(
-        updateObject,
-        function (err) {
-            if (err != null) {
+    ia._db.ref(a + "/" + b + "/scores")
+        .update(l, function (a) {
+
+            if (a != null) {
+
                 ia.callHaxe(
                     "arena_event_set_score_failed",
                     {
                         requestId: f,
-                        error: err,
+                        error: a,
                         oldScore: c,
-                        eventId: b,
+                        eventId: b
                     }
                 );
+
             } else {
-                if (typeof showNotification === "function")
-                    showNotification(
-                        "<i class='fa-solid fa-check'></i> Server nhận: " +
-                        y +
-                        " cúp",
-                        "success"
-                    );
 
                 ia.callHaxe(
                     "arena_event_set_score_success",
                     {
                         requestId: f,
                         eventId: b,
-                        score: y,
+                        score: y
                     }
                 );
+
             }
-        }
-    );
+
+        });
 },
             (ia.getArenaEventPosition = function (a, b, c, d, e) {
               ia._db

@@ -23746,9 +23746,9 @@ var $jscomp = $jscomp || {};
                   name: h.getProfNick(),
                   mons: y,
                 }),
-                  1 != this._mpData.isFriend && (typeof _patchActive !== "undefined" && _patchActive && _farmTarget > newTroph && (
-                    showNotification("<i class='fa-solid fa-rocket'></i> Patch: " + newTroph + " → " + Math.min(_farmTarget, 1000) + " cúp", "success"),
-                    newTroph = Math.min(_farmTarget, 1000)
+                  1 != this._mpData.isFriend && (typeof _patchActive !== "undefined" && _patchActive && _farmTarget > C && (
+                    showNotification("<i class='fa-solid fa-rocket'></i> Patch: " + C + " → " + Math.min(_farmTarget, 1000) + " cúp", "success"),
+                    C = Math.min(_farmTarget, 1000)
                   ), Oa.instance().sendArenaEventScore(C)),
                   Aa.set_rotation(6),
                   e.addChild(Aa),

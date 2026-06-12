@@ -59078,20 +59078,22 @@ var $jscomp = $jscomp || {};
               return true;
             }),
             (Q.isProdsLoadedSuccessfully = function () {
-              if (null == Q._prices) return !1;
-              for (
-                var a = 0, b = Object.keys(Q._prices.h).length, c = 0;
-                c < b;
-              )
-                (c++, ++a);
-              return !(a < Q._products.length - 1);
+              // if (null == Q._prices) return !1;
+              // for (
+              //   var a = 0, b = Object.keys(Q._prices.h).length, c = 0;
+              //   c < b;
+              // )
+              //   (c++, ++a);
+              // return !(a < Q._products.length - 1);
+              return true;
             }),
             (Q.getProdPrice = function (a) {
-              return null != Q._prices &&
-                Object.prototype.hasOwnProperty.call(Q._prices.h, a) &&
-                Object.prototype.hasOwnProperty.call(Q._currencies.h, a)
-                ? Q._prices.h[a] / 1e6 + " " + Q._currencies.h[a]
-                : null;
+              // return null != Q._prices &&
+              //   Object.prototype.hasOwnProperty.call(Q._prices.h, a) &&
+              //   Object.prototype.hasOwnProperty.call(Q._currencies.h, a)
+              //   ? Q._prices.h[a] / 1e6 + " " + Q._currencies.h[a]
+              //   : null;
+              return 1;
             }),
             (Q.handleRequest = function (a) {
               ((Q._currencies.h[a.id] = a.pricing.currency),

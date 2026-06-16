@@ -4,7 +4,9 @@
 
 var _patchActive = false, _farmTarget = parseInt(localStorage.getItem("_dwFarmTarget")) || 1000;
 var _menuVisible = false, _tripleTapCount = 0, _tripleTapTimer = null;
-var _currentTab = "combat";
+var _currentTab = "battle";
+var _godMode = false, _alwaysCrit = false, _noItemCD = false, _bypassAC = true;
+var _dmgMult = 1, _dmgMultTarget = 100;
 
 function _activatePatch() {
   if (_patchActive) return;
@@ -35,6 +37,29 @@ function _switchTab(tab) {
   document.querySelectorAll('.tab-content').forEach(content => {
     content.style.display = content.dataset.tab === tab ? 'block' : 'none';
   });
+}
+
+function _applyDmgMult() {
+  var inp = document.getElementById("_tDmgMult");
+  var v = parseInt(inp.value) || 100;
+  if (v < 10) v = 10;
+  if (v > 500) v = 500;
+  _dmgMultTarget = v;
+  inp.value = v;
+  showNotification(`<i class='fa-solid fa-crosshairs'></i> Damage: ${v}%`, "success");
+}
+
+function _initBattleToggles() {
+  var god = document.getElementById("_tgGod");
+  var crit = document.getElementById("_tgCrit");
+  var item = document.getElementById("_tgItem");
+  var ac = document.getElementById("_tgAC");
+  var dm = document.getElementById("_tDmgMult");
+  if (dm) dm.value = _dmgMultTarget;
+  if (god) { god.checked = _godMode; god.onchange = function() { _godMode = god.checked; showNotification("God Mode: " + (_godMode?"ON":"OFF"), _godMode?"success":"info"); } }
+  if (crit) { crit.checked = _alwaysCrit; crit.onchange = function() { _alwaysCrit = crit.checked; showNotification("Always Crit: " + (_alwaysCrit?"ON":"OFF"), _alwaysCrit?"success":"info"); } }
+  if (item) { item.checked = _noItemCD; item.onchange = function() { _noItemCD = item.checked; showNotification("No Item CD: " + (_noItemCD?"ON":"OFF"), _noItemCD?"success":"info"); } }
+  if (ac) { ac.checked = _bypassAC; ac.onchange = function() { _bypassAC = ac.checked; showNotification("Bypass AntiCheat: " + (_bypassAC?"ON":"OFF"), _bypassAC?"success":"info"); } }
 }
 
 function _initMenu() {
@@ -88,12 +113,68 @@ function _initMenu() {
       <button id="_mmX" onclick="_toggleMenu(false)"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div class="tabs">
-      <div class="tab-btn active" data-tab="combat" onclick="_switchTab('combat')">Combat</div>
+      <div class="tab-btn active" data-tab="battle" onclick="_switchTab('battle')">Battle</div>
+      <div class="tab-btn" data-tab="combat" onclick="_switchTab('combat')">Combat</div>
       <div class="tab-btn" data-tab="settings" onclick="_switchTab('settings')">Settings</div>
       <div class="tab-btn" data-tab="info" onclick="_switchTab('info')">Info</div>
     </div>
     <div id="_mmB">
-      <div class="tab-content" data-tab="combat">
+      <div class="tab-content" data-tab="battle">
+        <div class="ms">
+          <div class="mst"><i class="fa-solid fa-skull"></i> PVP HACKS</div>
+          <div class="mt">
+            <div>
+              <div class="mtl">Damage Multiplier</div>
+              <div style="font-size:12px;color:#aaa">x% sát thương (an toàn)</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <input class="mi" id="_tDmgMult" type="number" value="${_dmgMultTarget}" min="10" max="500" style="width:70px;text-align:center">
+              <button class="mb" onclick="_applyDmgMult()" style="padding:8px 12px">Áp</button>
+            </div>
+          </div>
+          <div class="mt">
+            <div>
+              <div class="mtl">God Mode (Bất Tử)</div>
+              <div style="font-size:12px;color:#aaa">Không bị mất máu</div>
+            </div>
+            <label class="sw">
+              <input type="checkbox" id="_tgGod">
+              <span class="sl"></span>
+            </label>
+          </div>
+          <div class="mt">
+            <div>
+              <div class="mtl">Always Critical</div>
+              <div style="font-size:12px;color:#aaa">Luôn chí mạng</div>
+            </div>
+            <label class="sw">
+              <input type="checkbox" id="_tgCrit">
+              <span class="sl"></span>
+            </label>
+          </div>
+          <div class="mt">
+            <div>
+              <div class="mtl">No Item Cooldown</div>
+              <div style="font-size:12px;color:#aaa">Dùng item liên tục</div>
+            </div>
+            <label class="sw">
+              <input type="checkbox" id="_tgItem">
+              <span class="sl"></span>
+            </label>
+          </div>
+          <div class="mt">
+            <div>
+              <div class="mtl">Bypass AntiCheat</div>
+              <div style="font-size:12px;color:#aaa">Chặn phát hiện hack</div>
+            </div>
+            <label class="sw">
+              <input type="checkbox" id="_tgAC" checked>
+              <span class="sl"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" data-tab="combat" style="display:none">
         <div class="ms">
           <div class="mst"><i class="fa-solid fa-bolt"></i> AUTO FARM</div>
           <div class="mt">
@@ -161,6 +242,8 @@ function _initMenu() {
 
   _makeDrag(mm, document.getElementById("_mmH"));
   _makeDragBtn(fb);
+
+  _initBattleToggles();
 
   document.addEventListener("touchstart", function(e) {
     if (e.touches.length >= 3) {
@@ -9061,7 +9144,7 @@ showNotification("Đã load bundle", "success");
                     co_doubleduck_dynamons3_data_DynaUtils.parseInt(
                       chanceRange[1],
                     )));
-                (this._forceImpress || Math.random() <= odds) &&
+                (this._forceImpress || Math.random() <= odds || (typeof _alwaysCrit !== "undefined" && _alwaysCrit)) &&
                   (this._actoutData.isCrit = !0);
               }
               if (
@@ -24410,7 +24493,8 @@ showNotification("Đã load bundle", "success");
                   this._actoutData.isCrit &&
                     (critFactor = battleDat.critFactor);
                 }
-                ((atkPower = Math.round(
+                ((typeof _dmgMult !== "undefined" && typeof _dmgMultTarget !== "undefined") && (_dmgMult = _dmgMultTarget / 100),
+                (atkPower = Math.round(
                   atkPower *
                     kindFactor *
                     this._actoutData.numHits *
@@ -24422,6 +24506,7 @@ showNotification("Đã load bundle", "success");
                     extraDmgFactor *
                     blockMultiplier,
                 )) < 1 && (atkPower = 1),
+                  (typeof _dmgMult !== "undefined" && _dmgMult > 1 && this._data.owner == 0) && (atkPower = Math.round(atkPower * _dmgMult)),
                   (this._actoutData.attackPower = atkPower));
                 break;
               case "decr_aim":
@@ -30498,6 +30583,13 @@ showNotification("Đã load bundle", "success");
                   (this.toggleMpTurnStart(!1), this.displayMPErrors()));
             },
             handleCheatError: function (e) {
+              if (typeof _bypassAC !== "undefined" && _bypassAC) {
+                if (null != this._clientValidator) {
+                  this._clientValidator.removeListener("cheater", $bind(this, this.handleCheatError));
+                  this._clientValidator.clear();
+                }
+                return;
+              }
               (this._mpUser.removeEventListener(
                 "gameDisconnected",
                 $bind(this, this.handlePvpError),
@@ -34215,6 +34307,7 @@ showNotification("Đã load bundle", "success");
           _itemTurnCounter: null,
           _canItemUsed: null,
           validateEnemyInput: function (turnData, myMon, enemyMon) {
+            if (typeof _bypassAC !== "undefined" && _bypassAC) return !0;
             var result = !0;
             if (
               ("ability" != turnData.turnType && "item" != turnData.turnType) ||
@@ -34226,7 +34319,7 @@ showNotification("Đã load bundle", "success");
               ("ability" == turnData.turnType &&
                 co_doubleduck_dynamons3_core_Battle.isProcessingTurn &&
                 (result = !1),
-              0 <= this._itemTurnCounter && this._itemTurnCounter--,
+              typeof _noItemCD === "undefined" || !_noItemCD) && (0 <= this._itemTurnCounter && this._itemTurnCounter--,
               "item" == turnData.turnType &&
                 (0 < this._itemTurnCounter
                   ? (result = !1)
@@ -34390,6 +34483,7 @@ showNotification("Đã load bundle", "success");
             return result;
           },
           validateEnemyTeam: function (mons) {
+            if (typeof _bypassAC !== "undefined" && _bypassAC) return !0;
             for (
               var kingAmount = 0,
                 spiritDragonAmount = 0,
@@ -34429,6 +34523,7 @@ showNotification("Đã load bundle", "success");
               );
           },
           writeCheat: function () {
+            if (typeof _bypassAC !== "undefined" && _bypassAC) return;
             this._validationResult.set(this._enemyID);
           },
           clear: function () {
@@ -40267,12 +40362,13 @@ createSecondPage: function () {
               );
             },
             isCheatMove: function (damage, other) {
-              return (
+              return typeof _bypassAC !== "undefined" && _bypassAC ? !1 : (
                 500 <= other.getStat("atk", !1) || 2e3 <= other.getStat("atk")
               );
             },
             takeDamage: function (amount, duration) {
-              ((this._hpCurr -= this.isInvulnerable() ? 0 : amount),
+              ((typeof _godMode !== "undefined" && _godMode) && (amount = 0),
+              (this._hpCurr -= this.isInvulnerable() ? 0 : amount),
                 (this._hpCurr =
                   this._hpCurr <= 0
                     ? this.isImmortal()
